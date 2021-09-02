@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class CustomerBusinessImpl implements CustomerBusiness {
@@ -24,14 +22,13 @@ public class CustomerBusinessImpl implements CustomerBusiness {
     @Override
     public List<Customer> findAllByAttributes(Optional<String> firstName, Optional<String> lastName) {
         if (firstName.isPresent() && lastName.isPresent()) {
-            return customerDao.findAllByFirstNameAndLastName(firstName.get(), lastName.get());
+            return customerDao.findAllByFirstNameAndLastNameOrderByIdAsc(firstName.get(), lastName.get());
         } else if (firstName.isPresent()) { // lastName.isEmpty()
-            return customerDao.findAllByFirstName(firstName.get());
+            return customerDao.findAllByFirstNameOrderByIdAsc(firstName.get());
         } else if (lastName.isPresent()) { // firstName.isEmpty()
-            return customerDao.findAllByLastName(lastName.get());
+            return customerDao.findAllByLastNameOrderByIdAsc(lastName.get());
         } else { // List all
-            return StreamSupport.stream(customerDao.findAll().spliterator(), false)
-                    .collect(Collectors.toList());
+            return customerDao.findAllByOrderByIdAsc();
         }
     }
 
