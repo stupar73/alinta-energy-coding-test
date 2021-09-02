@@ -3,6 +3,7 @@ package au.com.alintaenergy.customercrud.business;
 import au.com.alintaenergy.customercrud.exception.CustomerNotFoundException;
 import au.com.alintaenergy.customercrud.model.Customer;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public interface CustomerBusiness {
      * @param newCustomer The new {@link Customer} to create.
      * @return The {@link Customer} that was created
      */
-    Customer create(Customer newCustomer);
+    Customer create(@Valid Customer newCustomer);
 
     /**
      * Update an existing {@link Customer}.
@@ -40,7 +41,7 @@ public interface CustomerBusiness {
      * @return The updated {@link Customer}.
      * @throws CustomerNotFoundException if there is no customer with the provided {@literal id}.
      */
-    Customer updateById(Long id, Customer updatedCustomer);
+    Customer updateById(Long id, @Valid Customer updatedCustomer);
 
     /**
      * Delete an existing {@link Customer}.

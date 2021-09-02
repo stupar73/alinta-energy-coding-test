@@ -79,7 +79,7 @@ public class CustomerController extends BaseController {
             })
     })
     @PostMapping
-    public ResponseEntity<Customer> create(@RequestBody @Valid Customer newCustomer) {
+    public ResponseEntity<Customer> create(@RequestBody Customer newCustomer) {
         return ResponseEntity.status(HttpStatus.CREATED).body(customerBusiness.create(newCustomer));
     }
 
@@ -97,7 +97,7 @@ public class CustomerController extends BaseController {
             })
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> update(@PathVariable("id") Long id, @RequestBody @Valid Customer updatedCustomer) {
+    public ResponseEntity<Customer> update(@PathVariable("id") Long id, @RequestBody Customer updatedCustomer) {
         return ResponseEntity.ok(customerBusiness.updateById(id, updatedCustomer));
     }
 

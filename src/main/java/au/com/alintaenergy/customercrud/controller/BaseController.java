@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.time.format.DateTimeParseException;
+import java.util.Iterator;
 import java.util.List;
 
 public class BaseController {
@@ -29,6 +32,20 @@ public class BaseController {
         errorResponse.setMessage(ErrorConstants.ERROR_MESSAGE_VALIDATION_VIOLATIONS);
         for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
             errorResponse.addViolation(new ValidationViolation(fieldError.getField(), fieldError.getDefaultMessage()));
+        }
+
+        return errorResponse;
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ValidationErrorResponse handleConstraintViolationException(ConstraintViolationException exception) {
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse();
+
+        errorResponse.setCode(ErrorConstants.ERROR_CODE_VALIDATION_VIOLATIONS);
+        errorResponse.setMessage(ErrorConstants.ERROR_MESSAGE_VALIDATION_VIOLATIONS);
+        for (ConstraintViolation<?> violation : exception.getConstraintViolations()) {
+            errorResponse.addViolation(new ValidationViolation(violation.getPropertyPath().toString(), violation.getMessage()));
         }
 
         return errorResponse;

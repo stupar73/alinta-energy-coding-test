@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
@@ -107,6 +108,36 @@ class CustomerBusinessTest {
     }
 
     @Test
+    void create_ValidationError_MissingFirstName_ConstraintViolationException() {
+        Customer newCustomer = new Customer();
+        newCustomer.setLastName("Last");
+        newCustomer.setDateOfBirth(LocalDate.now());
+
+        Throwable t = getSpecificCause(assertThrows(Exception.class, () -> customerBusiness.create(newCustomer)));
+        assertEquals(ConstraintViolationException.class, t.getClass());
+    }
+
+    @Test
+    void create_ValidationError_MissingLastName_ConstraintViolationException() {
+        Customer newCustomer = new Customer();
+        newCustomer.setFirstName("First");
+        newCustomer.setDateOfBirth(LocalDate.now());
+
+        Throwable t = getSpecificCause(assertThrows(Exception.class, () -> customerBusiness.create(newCustomer)));
+        assertEquals(ConstraintViolationException.class, t.getClass());
+    }
+
+    @Test
+    void create_ValidationError_MissingDateOfBirth_ConstraintViolationException() {
+        Customer newCustomer = new Customer();
+        newCustomer.setFirstName("First");
+        newCustomer.setLastName("Last");
+
+        Throwable t = getSpecificCause(assertThrows(Exception.class, () -> customerBusiness.create(newCustomer)));
+        assertEquals(ConstraintViolationException.class, t.getClass());
+    }
+
+    @Test
     void updateById_ExistingId_FirstName_Success() {
         Customer updatedCustomer = new Customer(testParkerCustomer);
         updatedCustomer.setFirstName("Updated");
@@ -151,6 +182,12 @@ class CustomerBusinessTest {
         customerBusiness.delete(stuartTestCustomer.getId());
 
         assertThat(customerDao.findAll(), not(hasItem(stuartTestCustomer)));
+    }
 
+    private Throwable getSpecificCause(Throwable t) {
+        while (t.getCause() != null) {
+            t = t.getCause();
+        }
+        return t;
     }
 }
