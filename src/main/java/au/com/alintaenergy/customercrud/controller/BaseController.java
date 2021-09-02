@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -45,6 +46,16 @@ public class BaseController {
             return errorResponse;
         }
         // Not handling any other InvalidFormatException exceptions
+        throw exception;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+        if (exception.getCause() instanceof NumberFormatException) {
+            return new ErrorResponse(ErrorConstants.ERROR_CODE_BAD_REQUEST, exception.getLocalizedMessage());
+        }
+        // Not handling any other MethodArgumentTypeMismatchException exceptions
         throw exception;
     }
 
