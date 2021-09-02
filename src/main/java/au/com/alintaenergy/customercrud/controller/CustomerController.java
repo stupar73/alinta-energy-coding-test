@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/customers")
-public class CustomerController {
+public class CustomerController extends BaseController {
 
     @Autowired
     CustomerBusiness customerBusiness;
@@ -34,12 +35,12 @@ public class CustomerController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Customer> create(@RequestBody Customer newCustomer) {
+    public ResponseEntity<Customer> create(@RequestBody @Valid Customer newCustomer) {
         return ResponseEntity.status(HttpStatus.CREATED).body(customerBusiness.create(newCustomer));
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
-    public ResponseEntity<Customer> updateOrCreate(@PathVariable("id") Long id, @RequestBody Customer updatedCustomer) {
+    public ResponseEntity<Customer> updateOrCreate(@PathVariable("id") Long id, @RequestBody @Valid Customer updatedCustomer) {
         // TODO Return 200 if updated, 201 if created
         return ResponseEntity.ok(customerBusiness.updateOrCreate(id, updatedCustomer));
     }

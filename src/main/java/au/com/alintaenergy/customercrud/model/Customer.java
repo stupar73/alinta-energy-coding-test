@@ -3,6 +3,7 @@ package au.com.alintaenergy.customercrud.model;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
@@ -11,8 +12,11 @@ public class Customer {
     @Id
     @GeneratedValue
     private Long id;
+    @NotNull
     private String firstName;
+    @NotNull
     private String lastName;
+    @NotNull
     private LocalDate dateOfBirth;
 
     public Long getId() {

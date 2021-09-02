@@ -1,6 +1,7 @@
 package au.com.alintaenergy.customercrud.business;
 
 import au.com.alintaenergy.customercrud.dao.CustomerDAO;
+import au.com.alintaenergy.customercrud.exception.CustomerNotFoundException;
 import au.com.alintaenergy.customercrud.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class CustomerBusinessImpl implements CustomerBusiness {
 
     @Override
     public Customer findById(Long id) {
-        return customerDao.findById(id).orElseThrow();
+        return customerDao.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
     @Override
@@ -56,6 +57,9 @@ public class CustomerBusinessImpl implements CustomerBusiness {
 
     @Override
     public void delete(Long id) {
+        if (!customerDao.existsById(id)) {
+            throw new CustomerNotFoundException(id);
+        }
         customerDao.deleteById(id);
     }
 }
