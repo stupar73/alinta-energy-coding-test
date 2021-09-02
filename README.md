@@ -27,7 +27,7 @@ See `<host>:8080/swagger-ui.html` for API documentation.
   * Performance
 
 ## Build
-    mvn clean package verify
+    mvn clean verify
 ### Requirements
 * Java JDK (8+)
 * Maven
