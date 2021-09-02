@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 public class Customer {
@@ -18,6 +19,16 @@ public class Customer {
     private String lastName;
     @NotNull
     private LocalDate dateOfBirth;
+
+    public Customer() {
+    }
+
+    public Customer(Customer that) {
+        this.id = that.getId();
+        this.firstName = that.getFirstName();
+        this.lastName = that.getLastName();
+        this.dateOfBirth = that.getDateOfBirth();
+    }
 
     public Long getId() {
         return id;
@@ -49,5 +60,35 @@ public class Customer {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Customer customer = (Customer) o;
+        return id.equals(customer.id)
+                && firstName.equals(customer.firstName)
+                && lastName.equals(customer.lastName)
+                && dateOfBirth.equals(customer.dateOfBirth);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, dateOfBirth);
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                '}';
     }
 }
