@@ -40,9 +40,8 @@ public class CustomerController extends BaseController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
-    public ResponseEntity<Customer> updateOrCreate(@PathVariable("id") Long id, @RequestBody @Valid Customer updatedCustomer) {
-        // TODO Return 200 if updated, 201 if created
-        return ResponseEntity.ok(customerBusiness.updateOrCreate(id, updatedCustomer));
+    public ResponseEntity<Customer> update(@PathVariable("id") Long id, @RequestBody @Valid Customer updatedCustomer) {
+            return ResponseEntity.ok(customerBusiness.updateById(id, updatedCustomer));
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/{id}")

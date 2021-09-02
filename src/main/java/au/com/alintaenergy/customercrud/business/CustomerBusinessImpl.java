@@ -38,7 +38,7 @@ public class CustomerBusinessImpl implements CustomerBusiness {
     }
 
     @Override
-    public Customer updateOrCreate(Long id, Customer updatedCustomer) {
+    public Customer updateById(Long id, Customer updatedCustomer) {
         return customerDao.findById(id)
                 .map(employee -> {
                     employee.setFirstName(updatedCustomer.getFirstName());
@@ -46,10 +46,7 @@ public class CustomerBusinessImpl implements CustomerBusiness {
                     employee.setDateOfBirth(updatedCustomer.getDateOfBirth());
                     return customerDao.save(employee);
                 })
-                .orElseGet(() -> {
-                    updatedCustomer.setId(id);
-                    return customerDao.save(updatedCustomer);
-                });
+                .orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
     @Override
