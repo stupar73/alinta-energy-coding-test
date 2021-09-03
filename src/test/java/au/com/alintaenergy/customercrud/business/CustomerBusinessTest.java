@@ -94,11 +94,25 @@ class CustomerBusinessTest {
     }
 
     @Test
-    void create_Success() {
+    void create_DateOfBirthInPresent_Success() {
         Customer newCustomer = new Customer();
         newCustomer.setFirstName("New");
         newCustomer.setLastName("Customer");
         newCustomer.setDateOfBirth(LocalDate.now());
+
+        Customer newCustomerFromApp = customerBusiness.create(newCustomer);
+        // Update id from the response but leave other fields alone
+        newCustomer.setId(newCustomerFromApp.getId());
+
+        assertEquals(customerDao.findById(newCustomerFromApp.getId()).get(), newCustomer);
+    }
+
+    @Test
+    void create_DateOfBirthInPast_Success() {
+        Customer newCustomer = new Customer();
+        newCustomer.setFirstName("New");
+        newCustomer.setLastName("Customer");
+        newCustomer.setDateOfBirth(LocalDate.now().minusDays(1L));
 
         Customer newCustomerFromApp = customerBusiness.create(newCustomer);
         // Update id from the response but leave other fields alone
@@ -138,7 +152,18 @@ class CustomerBusinessTest {
     }
 
     @Test
-    void updateById_ExistingId_FirstName_Success() {
+    void create_ValidationError_DateOfBirthInFuture_ConstraintViolationException() {
+        Customer newCustomer = new Customer();
+        newCustomer.setFirstName("First");
+        newCustomer.setLastName("Last");
+        newCustomer.setDateOfBirth(LocalDate.now().plusDays(1L));
+
+        Throwable t = getSpecificCause(assertThrows(Exception.class, () -> customerBusiness.create(newCustomer)));
+        assertEquals(ConstraintViolationException.class, t.getClass());
+    }
+
+    @Test
+    void updateById_ExistingId_ChangedFirstName_Success() {
         Customer updatedCustomer = new Customer(testParkerCustomer);
         updatedCustomer.setFirstName("Updated");
 
@@ -148,7 +173,7 @@ class CustomerBusinessTest {
     }
 
     @Test
-    void updateById_ExistingId_LastName_Success() {
+    void updateById_ExistingId_ChangedLastName_Success() {
         Customer updatedCustomer = new Customer(testParkerCustomer);
         updatedCustomer.setLastName("Updated");
 
@@ -158,9 +183,19 @@ class CustomerBusinessTest {
     }
 
     @Test
-    void updateById_ExistingId_DateOfBirth_Success() {
+    void updateById_ExistingId_ChangedDateOfBirthInPresent_Success() {
         Customer updatedCustomer = new Customer(testParkerCustomer);
         updatedCustomer.setDateOfBirth(LocalDate.now());
+
+        customerBusiness.updateById(testParkerCustomer.getId(), updatedCustomer);
+
+        assertEquals(customerDao.findById(testParkerCustomer.getId()).get(), updatedCustomer);
+    }
+
+    @Test
+    void updateById_ExistingId_ChangedDateOfBirthInPast_Success() {
+        Customer updatedCustomer = new Customer(testParkerCustomer);
+        updatedCustomer.setDateOfBirth(LocalDate.now().minusDays(1L));
 
         customerBusiness.updateById(testParkerCustomer.getId(), updatedCustomer);
 
