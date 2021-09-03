@@ -40,11 +40,11 @@ public class CustomerBusinessImpl implements CustomerBusiness {
     @Override
     public Customer updateById(Long id, Customer updatedCustomer) {
         return customerDao.findById(id)
-                .map(employee -> {
-                    employee.setFirstName(updatedCustomer.getFirstName());
-                    employee.setLastName(updatedCustomer.getLastName());
-                    employee.setDateOfBirth(updatedCustomer.getDateOfBirth());
-                    return customerDao.save(employee);
+                .map(customer -> {
+                    customer.setFirstName(updatedCustomer.getFirstName());
+                    customer.setLastName(updatedCustomer.getLastName());
+                    customer.setDateOfBirth(updatedCustomer.getDateOfBirth());
+                    return customerDao.save(customer);
                 })
                 .orElseThrow(() -> new CustomerNotFoundException(id));
     }
