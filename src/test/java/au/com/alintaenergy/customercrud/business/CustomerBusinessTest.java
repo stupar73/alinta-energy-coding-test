@@ -67,6 +67,11 @@ class CustomerBusinessTest extends BaseTest {
     }
 
     @Test
+    void findById_NonExistingId_CustomerNotFoundException() {
+        assertThrows(CustomerNotFoundException.class, () -> customerBusiness.findById(999L));
+    }
+
+    @Test
     void findAllByAttributes_All_Success() {
         List<Customer> customersFromApp = customerBusiness.findAllByAttributes(Optional.empty(), Optional.empty());
 
@@ -92,6 +97,13 @@ class CustomerBusinessTest extends BaseTest {
         List<Customer> customersFromApp = customerBusiness.findAllByAttributes(Optional.of("Stuart"), Optional.of("Parker"));
 
         assertEquals(List.of(stuartParkerCustomer), customersFromApp);
+    }
+
+    @Test
+    void findAllByAttributes_NoMatch_Success() {
+        List<Customer> customersFromApp = customerBusiness.findAllByAttributes(Optional.of("Non-existing"), Optional.of("Customer"));
+
+        assertEquals(List.of(), customersFromApp);
     }
 
     @Test
@@ -208,9 +220,22 @@ class CustomerBusinessTest extends BaseTest {
     }
 
     @Test
+    void updateById_ExistingId_ChangedDateOfBirthInFuture_ConstraintViolationException() {
+        Customer updatedCustomer = new Customer(testParkerCustomer);
+        updatedCustomer.setDateOfBirth(LocalDate.now().plusDays(1L));
+
+        assertThrowsInCausesStack(ConstraintViolationException.class, () -> customerBusiness.updateById(testParkerCustomer.getId(), updatedCustomer));
+    }
+
+    @Test
     void delete_ExistingId_Success() {
         customerBusiness.delete(stuartTestCustomer.getId());
 
         assertThat(customerDao.findAll(), not(hasItem(stuartTestCustomer)));
+    }
+
+    @Test
+    void delete_NonExistingId_CustomerNotFoundException() {
+        assertThrows(CustomerNotFoundException.class, () -> customerBusiness.delete(999L));
     }
 }
