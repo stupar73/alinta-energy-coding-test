@@ -1,5 +1,6 @@
 package au.com.alintaenergy.customercrud.business;
 
+import au.com.alintaenergy.customercrud.BaseTest;
 import au.com.alintaenergy.customercrud.dao.CustomerDAO;
 import au.com.alintaenergy.customercrud.exception.CustomerNotFoundException;
 import au.com.alintaenergy.customercrud.model.Customer;
@@ -22,7 +23,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class CustomerBusinessTest {
+class CustomerBusinessTest extends BaseTest {
     @Autowired
     private CustomerDAO customerDao;
     @Autowired
@@ -127,8 +128,7 @@ class CustomerBusinessTest {
         newCustomer.setLastName("Last");
         newCustomer.setDateOfBirth(LocalDate.now());
 
-        Throwable t = getSpecificCause(assertThrows(Exception.class, () -> customerBusiness.create(newCustomer)));
-        assertEquals(ConstraintViolationException.class, t.getClass());
+        assertThrowsInCausesStack(ConstraintViolationException.class, () -> customerBusiness.create(newCustomer));
     }
 
     @Test
@@ -137,8 +137,7 @@ class CustomerBusinessTest {
         newCustomer.setFirstName("First");
         newCustomer.setDateOfBirth(LocalDate.now());
 
-        Throwable t = getSpecificCause(assertThrows(Exception.class, () -> customerBusiness.create(newCustomer)));
-        assertEquals(ConstraintViolationException.class, t.getClass());
+        assertThrowsInCausesStack(ConstraintViolationException.class, () -> customerBusiness.create(newCustomer));
     }
 
     @Test
@@ -147,8 +146,7 @@ class CustomerBusinessTest {
         newCustomer.setFirstName("First");
         newCustomer.setLastName("Last");
 
-        Throwable t = getSpecificCause(assertThrows(Exception.class, () -> customerBusiness.create(newCustomer)));
-        assertEquals(ConstraintViolationException.class, t.getClass());
+        assertThrowsInCausesStack(ConstraintViolationException.class, () -> customerBusiness.create(newCustomer));
     }
 
     @Test
@@ -158,8 +156,7 @@ class CustomerBusinessTest {
         newCustomer.setLastName("Last");
         newCustomer.setDateOfBirth(LocalDate.now().plusDays(1L));
 
-        Throwable t = getSpecificCause(assertThrows(Exception.class, () -> customerBusiness.create(newCustomer)));
-        assertEquals(ConstraintViolationException.class, t.getClass());
+        assertThrowsInCausesStack(ConstraintViolationException.class, () -> customerBusiness.create(newCustomer));
     }
 
     @Test
@@ -207,9 +204,7 @@ class CustomerBusinessTest {
         Customer updatedCustomer = new Customer(testParkerCustomer);
         updatedCustomer.setFirstName("Updated");
 
-        assertThrows(
-                CustomerNotFoundException.class,
-                () -> customerBusiness.updateById(999L, updatedCustomer));
+        assertThrows(CustomerNotFoundException.class, () -> customerBusiness.updateById(999L, updatedCustomer));
     }
 
     @Test
@@ -217,12 +212,5 @@ class CustomerBusinessTest {
         customerBusiness.delete(stuartTestCustomer.getId());
 
         assertThat(customerDao.findAll(), not(hasItem(stuartTestCustomer)));
-    }
-
-    private Throwable getSpecificCause(Throwable t) {
-        while (t.getCause() != null) {
-            t = t.getCause();
-        }
-        return t;
     }
 }
